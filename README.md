@@ -21,8 +21,8 @@
 - ESP8266 Influxdb 3.12.0
 
 ## 드라이버 설치
-- ESP32 USBtoSerial Driver 받는 곳
+- ESP32 USBtoSerial Driver 받는 곳 (https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers)
 
 ## 참고
-- Installing the ESP32 Board in Arduino IDE
+- Installing the ESP32 Board in Arduino IDE (https://randomnerdtutorials.com/installing-the-esp32-board-in-arduino-ide-windows-instructions/)
 
