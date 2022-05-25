@@ -1,19 +1,12 @@
 #define GET_NFC_DATA    1
-#define MAX_PACKET      16
-
-#define PN532_SS  (5)
-
-
-#include <Adafruit_PN532.h>
-
-Adafruit_PN532 nfc(PN532_SS);
+#define MAX_PACKET      32
 
 
 void NfcInit()
 {
   Serial.println("Init Nfc");
 
-  nfc.begin();
+//   nfc.begin();   // can't work begin fucntio
 
   uint32_t versiondata = nfc.getFirmwareVersion();
   if (!versiondata) {
@@ -31,6 +24,9 @@ void NfcInit()
 
 void NfcTask(void* parameter)
 {
+
+    NfcInit();
+  
     uint8_t success;
     uint8_t uid[] = { 0, 0, 0, 0, 0, 0, 0 };  // Buffer to store the returned UID
     uint8_t uidLength;                        // Length of the UID (4 or 7 bytes depending on ISO14443A card type)
@@ -65,8 +61,11 @@ void NfcTask(void* parameter)
                 // Data seems to have been read ... spit it out
                 // 읽었으니 데이터 전송.
                 memcpy(l_arrID, &data[14], 13); l_arrID[13] = '\0';
+                Serial.println(l_arrID);
                 sprintf(l_arrRtnPacket, "$%d,%d,%s;", CAR_ID, GET_NFC_DATA, l_arrID);
                 Serial.println(l_arrRtnPacket);
+                Serial.println(l_arrRtnPacket);
+                Serial.println(l_arrID);
 
                 Serial.println("Reading Block 4:, 8");
                 nfc.PrintHexChar(data, 48);
@@ -75,6 +74,9 @@ void NfcTask(void* parameter)
                 // 그외 NDEF NFC는 고객테그로 간주하고 서버로 데이터 송신 
 //                g_udNFCFlag = 1;
                 Serial.println(l_arrID);
+                Serial.println((char *)l_arrID);
+                SendNfc((char *)l_arrID, (uint8_t *)uid);
+                Mp3Effect(3);
 //                SendNFCData((char*)uid, l_arrID);
 
 
@@ -94,7 +96,7 @@ void NfcTask(void* parameter)
         {
             Serial.println("Timed out waiting for a card");
         }
-        vTaskDelay(10);
+        vTaskDelay(1000);
     }
 
     vTaskDelete(NULL);

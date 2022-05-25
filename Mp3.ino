@@ -1,5 +1,10 @@
 #include <DFRobotDFPlayerMini.h>
 
+#define STOP      0
+#define PLAY      1
+#define EFFECT    2
+#define VOLUME    3
+
 DFRobotDFPlayerMini mp3Player;
 
 int volume = 5;
@@ -32,15 +37,86 @@ void Mp3Stop()
   mp3Player.stop();
 }
 
+void Mp3Effect(int number)
+{
+  Serial.println("Mp3 effect");
+  mp3Player.advertise(number);
+}
+
+void Mp3Pause()
+{
+  Serial.println("Mp3 pause");
+  mp3Player.pause();
+}
+
+void Mp3Volume(int number)
+{
+  Serial.println("Mp3 Volume");
+  mp3Player.volume(number);
+  Serial.println(volume);
+}
+
 void Mp3Task(void* parameter)
 {
-   
-    for (;;)
+  BaseType_t xStatus;
+
+  uint8_t packetBody[2] = { 0, };
+
+  Mp3Init();
+
+  Mp3Stop();
+
+  for (;;)
+  {
+    Serial.println("Mp3 Task");
+
+    // Command by serial
+    while(Serial.available())
     {
-      // TODO
-      Serial.println("Mp3 Task");
-      vTaskDelay(100);
-  
+      char readSerial = (char)Serial.read();
+      
+      if(readSerial == '0') {
+        Mp3Stop();
+      } else if (readSerial == '1') {
+        Mp3Play(1);
+      } else if (readSerial == '2') {
+        Mp3Effect(3);
+      } else if (readSerial == '3') {
+        Mp3Pause();
+      } else if (readSerial == '4') {
+        Mp3Effect(2);
+      } else if (readSerial == '+') {
+        volume++;
+        Mp3Volume(volume);
+      } else if (readSerial == '-') {
+        volume--;
+        Mp3Volume(volume);
+      } else {
+        Serial.println("Mp3 invalid cmd (0: stop, 1: play, 2: effect ah, 3: pause, 4: effect ome, +: volume up, -: volume down)");
+      }
+
     }
-    vTaskDelete(NULL);
+
+    xStatus = xQueueReceive(xQueueMp3, packetBody, 100);
+    if(xStatus == pdPASS)
+    {
+      Serial.printf("mp3 queue received: %d, %d\n", packetBody[0], packetBody[1]);
+      
+      if(packetBody[0] == STOP) {
+        Mp3Stop();
+      } else if(packetBody[0] == PLAY) {
+        Mp3Play(packetBody[1]);
+      } else if(packetBody[0] == EFFECT) {
+        Mp3Effect(packetBody[1]);
+      } else if(packetBody[0] == VOLUME) {
+        Mp3Volume(packetBody[1]);
+      } else {
+        Serial.println("invalid mp3 cmd");
+      }
+    }
+
+    vTaskDelay(1000);
+
+  }
+  vTaskDelete(NULL);
 }

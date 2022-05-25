@@ -1,5 +1,5 @@
-#define QN    0.00001          // 외부노이즈
-#define RN    0.05           // 측정노이즈
+#define EXTERNAL_NOISE       0.00001          // 외부노이즈
+#define MEASUREMENT_NOISE    0.05             // 측정노이즈
 
 float g_fBatteryVolt = 0;
 uint8_t g_dBatteryValue = 0;
@@ -12,6 +12,10 @@ void BatteryInit()
 
 void BatteryTask(void* parameter)
 {
+  BatteryInit();
+
+  BaseType_t xStatus;
+  
   uint16_t l_udBatteryADValue = 0;
   float l_fBatteryVolt = 0.0f;
 
@@ -34,11 +38,11 @@ void BatteryTask(void* parameter)
 
       // predict..
       g_xPredict = g_x;
-      g_PPredict = g_P + QN;
+      g_PPredict = g_P + EXTERNAL_NOISE;
       // predict..
 
       // Correct..
-      g_K = g_PPredict / (g_PPredict + RN);
+      g_K = g_PPredict / (g_PPredict + MEASUREMENT_NOISE);
       g_x = g_xPredict + g_K * (l_fBatteryVolt - g_xPredict);
       g_P = (1 - g_K) * g_PPredict;
       // Correct..               
@@ -58,11 +62,11 @@ void BatteryTask(void* parameter)
     
     // predict..
     g_xPredict = g_x;
-    g_PPredict = g_P + QN;
+    g_PPredict = g_P + EXTERNAL_NOISE;
     // predict..
     
     // Correct..
-    g_K = g_PPredict / (g_PPredict + RN);
+    g_K = g_PPredict / (g_PPredict + MEASUREMENT_NOISE);
     g_x = g_xPredict + g_K * (l_fBatteryVolt - g_xPredict);
     g_P = (1 - g_K) * g_PPredict;
     // Correct..               
@@ -72,7 +76,7 @@ void BatteryTask(void* parameter)
     g_dBatteryValue = (int)(22.22222f * g_fBatteryVolt - 488.8889f);
     
     l_dDispCount++;
-    if (l_dDispCount > 10)      // 60초에 한번씩 송출
+    if (l_dDispCount > 5)      // 60초에 한번씩 송출
     {
       l_dDispCount = 0;
   
@@ -80,10 +84,12 @@ void BatteryTask(void* parameter)
       Serial.print("  ");
       Serial.print(g_fBatteryVolt);
       Serial.print("  ");
-      Serial.println(g_dBatteryValue);        
+      Serial.println(g_dBatteryValue);
+      SendBattery(g_dBatteryValue);
+      // xStatus = xQueueSendToFront(xQueue, &g_dBatteryValue, 100);
     }
     
-    vTaskDelay(100);
+    vTaskDelay(1000);
 
   }
   vTaskDelete(NULL);
