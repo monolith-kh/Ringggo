@@ -53,4 +53,5 @@ dkms.conf
 
 # add igonre file and directory
 build/
+.vscode/
 
