@@ -6,19 +6,21 @@
 - Tools → Board → Boards Manager → esp32 검색 및 설치
 
 ## Tools에 세팅
-- Board: ESP32 Wrover Module
+- Board: ESP32 Dev Module
+- PSRAM: Enabled
 - Upload Speed: 921600 (default)
+- Flash Size: 4MB (32Mb)
 - Flash Frequency: 80MHz (default)
 - Flash Mode: DIO
-- Partition Scheme: 8M Flash (3MB APP/1.5MB FAT)
-- Core Debug Level: None
+- Partition Scheme: Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)
+- Core Debug Level: None (set **Verbose** when development)
 
 ## 필요한 라이브러리 설치
-- Adafruit BusIO 1.2.2 (버전 준수)
+- Adafruit BusIO v1.2.2 (버전 준수)
 - Adafruit PN532
 - FastLED
 - DFRobotDFPlayerMini
-- ESP8266 Influxdb 3.12.0
+- ESP8266 Influxdb v3.12.0
 
 ## 드라이버 설치
 - ESP32 USBtoSerial Driver 받는 곳 (https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers)
