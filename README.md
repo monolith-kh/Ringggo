@@ -1,4 +1,5 @@
 # Ringggo
+Electrics devices vehicle based on esp32(ESP32-WROOM-32D)
 
 ## Board 환경 설치
 - File → Preferences → Additional Boards Manager URLs
