@@ -54,7 +54,7 @@ void BatteryTask(void* parameter)
   for (;;)
   {
     // TODO
-    Serial.println("Battery Task");
+    // Serial.println("Battery Task");
 
     l_udBatteryADValue = analogRead(A5);
     l_fBatteryVolt = l_udBatteryADValue * 0.000805;        // AD Reference 보정
@@ -76,7 +76,7 @@ void BatteryTask(void* parameter)
     g_dBatteryValue = (int)(22.22222f * g_fBatteryVolt - 488.8889f);
     
     l_dDispCount++;
-    if (l_dDispCount > 5)      // 60초에 한번씩 송출
+    if (l_dDispCount > 20)      // 60초에 한번씩 송출
     {
       l_dDispCount = 0;
   
@@ -85,8 +85,8 @@ void BatteryTask(void* parameter)
       Serial.print(g_fBatteryVolt);
       Serial.print("  ");
       Serial.println(g_dBatteryValue);
-      SendBattery(g_dBatteryValue);
-      // xStatus = xQueueSendToFront(xQueue, &g_dBatteryValue, 100);
+      // SendBattery(g_dBatteryValue);
+      xStatus = xQueueSendToFront(xQueueBattery, &g_dBatteryValue, 100);
     }
     
     vTaskDelay(1000);

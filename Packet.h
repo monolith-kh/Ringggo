@@ -19,7 +19,6 @@ typedef struct {
     uint16_t length;
     uint16_t carNo;
     uint16_t reserved;
-    uint8_t body[];
 } Protocol_t;
 
 #pragma pack(1)

@@ -32,7 +32,7 @@ void BumperTask(void* parameter)
 
     for (;;)
     {
-        Serial.println("Bumper Task");
+        // Serial.println("Bumper Task");
 
         if(digitalRead(BMP_SEN_FRONT) == LOW)
         {
@@ -58,7 +58,7 @@ void BumperTask(void* parameter)
         if(bumper && pressed)
         {
             // SendBumper(bumper);
-            xStatus = xQueueSendToFront(xQueue, &bumper, 100);
+            xStatus = xQueueSendToFront(xQueueBumper, &bumper, 100);
             if(xStatus == pdPASS)
             {
                 Serial.printf("send game server queue: %x\n", bumper);

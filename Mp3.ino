@@ -68,7 +68,7 @@ void Mp3Task(void* parameter)
 
   for (;;)
   {
-    Serial.println("Mp3 Task");
+    // Serial.println("Mp3 Task");
 
     // Command by serial
     while(Serial.available())

@@ -16,7 +16,7 @@ TaskHandle_t* wifiTaskHandler;
 
 Adafruit_PN532 nfc(PN532_SCK, PN532_MISO, PN532_MOSI, PN532_SS);
 
-xQueueHandle xQueue, xQueueLed, xQueueMp3, xQueueRtls;
+xQueueHandle xQueueBumper, xQueueLed, xQueueMp3, xQueueRtls, xQueueBattery, xQueueNfc;
 
 
 void setup() {
@@ -25,7 +25,9 @@ void setup() {
   vTaskDelay(10);
   Serial.println("Hello Ringggo");
 
-  xQueue = xQueueCreate(10, sizeof(uint8_t));
+  xQueueBumper = xQueueCreate(10, sizeof(uint8_t));
+  xQueueBattery = xQueueCreate(5, sizeof(uint8_t));
+  xQueueNfc = xQueueCreate(5, sizeof(uint8_t));
   xQueueLed = xQueueCreate(5, sizeof(uint8_t[4]));
   xQueueMp3 = xQueueCreate(5, sizeof(uint8_t[2]));
   xQueueRtls = xQueueCreate(10, sizeof(uint8_t[2]));

@@ -44,7 +44,7 @@ void LedInit()
 
 void LedOn(uint32_t color)
 {
-  Serial.println("Led On");
+  // Serial.println("Led On");
 
   // Turn the LED on, then pause
   leds[0] = color;
@@ -54,7 +54,7 @@ void LedOn(uint32_t color)
 
 void LedOff()
 {
-  Serial.println("Led Off");
+  // Serial.println("Led Off");
   // Now turn the LED off, then pause
   leds[0] = CRGB::Black;
   FastLED.show();
@@ -82,7 +82,7 @@ void LedTask(void* parameter)
   
     for (;;)
     {
-      Serial.println("Led Task");
+      // Serial.println("Led Task");
       xStatus = xQueueReceive(xQueueLed, packetBody, 100);
       if(xStatus == pdPASS)
       {

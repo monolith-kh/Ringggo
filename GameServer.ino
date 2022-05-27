@@ -1,4 +1,4 @@
-#define GAME_HOST   "manunite.ringggo.981park.net"
+#define GAME_HOST   "manunited.ringggo.981park.net"
 // #define GAME_HOST   "192.168.41.254"
 #define GAME_PORT   9998
 
@@ -36,7 +36,7 @@ void GameServerTask(void* parameter)
   
   for (;;)
   {
-    Serial.println("GameServer Task");
+    // Serial.println("GameServer Task");
 
     while (gameClient.available())
     {
@@ -115,12 +115,18 @@ void GameServerSendTask(void* parameter)
   
   for (;;)
   {
-    Serial.println("GameServer Send Task");
-    xStatus = xQueueReceive(xQueue, &data, 100);
+    // Serial.println("GameServer Send Task");
+    xStatus = xQueueReceive(xQueueBumper, &data, 100);
     if(xStatus == pdPASS)
     {
       SendBumper(data);
       Serial.printf("receive queue: 0x%x\n", data);
+    }
+    xStatus = xQueueReceive(xQueueBattery, &data, 100);
+    if(xStatus == pdPASS)
+    {
+      SendBattery(data);
+      Serial.printf("receive queue: %d%\n", data);
     }
 
     vTaskDelay(100);
