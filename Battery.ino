@@ -85,7 +85,6 @@ void BatteryTask(void* parameter)
       Serial.print(g_fBatteryVolt);
       Serial.print("  ");
       Serial.println(g_dBatteryValue);
-      // SendBattery(g_dBatteryValue);
       xStatus = xQueueSendToFront(xQueueBattery, &g_dBatteryValue, 100);
     }
     

@@ -61,9 +61,7 @@ void NfcTask(void* parameter)
                 // Data seems to have been read ... spit it out
                 // 읽었으니 데이터 전송.
                 memcpy(l_arrID, &data[14], 13); l_arrID[13] = '\0';
-                Serial.println(l_arrID);
                 sprintf(l_arrRtnPacket, "$%d,%d,%s;", CAR_ID, GET_NFC_DATA, l_arrID);
-                Serial.println(l_arrRtnPacket);
                 Serial.println(l_arrRtnPacket);
                 Serial.println(l_arrID);
 
@@ -77,8 +75,13 @@ void NfcTask(void* parameter)
                 Serial.println((char *)l_arrID);
                 SendNfc((char *)l_arrID, (uint8_t *)uid);
                 Mp3Effect(3);
-//                SendNFCData((char*)uid, l_arrID);
 
+                sensor.clearFields();
+                sensor.addField("nfc", 1);
+                if(!idbClient.writePoint(sensor)) {
+                    Serial.print("InfluxDB write failed: ");
+                    Serial.println(idbClient.getLastErrorMessage());
+                }
 
                 // Wait a bit before reading the card again
                 vTaskDelay(1000);
@@ -89,8 +92,6 @@ void NfcTask(void* parameter)
                 Serial.println("Ooops ... unable to read the requested block.  Try another key?");
             }
             // 요기서 읽음.
-
-            
         }
         else
         {

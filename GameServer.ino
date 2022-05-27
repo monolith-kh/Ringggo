@@ -49,11 +49,24 @@ void GameServerTask(void* parameter)
         gameClient.write((const uint8_t *)&protocol, sizeof(protocol));
         Serial.println("send answer");
         Mp3Play(3);
+        sensor.clearFields();
+        sensor.addField("connection", 1);
+        if(!idbClient.writePoint(sensor)) {
+          Serial.print("InfluxDB write failed: ");
+          Serial.println(idbClient.getLastErrorMessage());
+        }
       } else if (packetHeader[0] == PK_CHECK_CONNECTION_REQ) {
         Serial.println("check received");
         Protocol_t protocol = {PK_CHECK_CONNECTION_ANS, CAR, 8, CAR_ID, 0, };
         gameClient.write((const uint8_t *)&protocol, sizeof(protocol));
         Serial.println("send answer");
+        sensor.clearFields();
+        sensor.addField("healthcheck", 1);
+        if(!idbClient.writePoint(sensor)) {
+          Serial.print("InfluxDB write failed: ");
+          Serial.println(idbClient.getLastErrorMessage());
+        }
+
       } else if (packetHeader[0] == PK_CARLED_NOTI) {
         gameClient.readBytes(packetBody, 4);
         Serial.printf("car led received: %d, %d, %d, %d\n", packetBody[0], packetBody[1], packetBody[2], packetBody[3]);
@@ -121,12 +134,24 @@ void GameServerSendTask(void* parameter)
     {
       SendBumper(data);
       Serial.printf("receive queue: 0x%x\n", data);
+      sensor.clearFields();
+      sensor.addField("bumper", data);
+      if(!idbClient.writePoint(sensor)) {
+        Serial.print("InfluxDB write failed: ");
+        Serial.println(idbClient.getLastErrorMessage());
+      }
     }
     xStatus = xQueueReceive(xQueueBattery, &data, 100);
     if(xStatus == pdPASS)
     {
       SendBattery(data);
       Serial.printf("receive queue: %d%\n", data);
+      sensor.clearFields();
+      sensor.addField("battery", data);
+      if(!idbClient.writePoint(sensor)) {
+        Serial.print("InfluxDB write failed: ");
+        Serial.println(idbClient.getLastErrorMessage());
+      }
     }
 
     vTaskDelay(100);

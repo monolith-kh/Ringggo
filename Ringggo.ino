@@ -16,13 +16,20 @@ TaskHandle_t* wifiTaskHandler;
 
 Adafruit_PN532 nfc(PN532_SCK, PN532_MISO, PN532_MOSI, PN532_SS);
 
+#define INFLUXDB_URL       "http://iwinv.jaehoonj.981park.net:8086"
+#define INFLUXDB_DB_NAME   "esp32"
+
+#include <InfluxDbClient.h>
+InfluxDBClient idbClient(INFLUXDB_URL, INFLUXDB_DB_NAME);
+Point sensor("ringggo");
+
 xQueueHandle xQueueBumper, xQueueLed, xQueueMp3, xQueueRtls, xQueueBattery, xQueueNfc;
 
 
 void setup() {
   // put your setup code here, to run once:
   Serial.begin((unsigned long)BAUDRATE);
-  vTaskDelay(10);
+  delay(100);
   Serial.println("Hello Ringggo");
 
   xQueueBumper = xQueueCreate(10, sizeof(uint8_t));
@@ -34,11 +41,20 @@ void setup() {
 
   WifiInit();
 
-  vTaskDelay(1000);
+  delay(1000);
 
   nfc.begin();
 
-//  NtpInit();
+  sensor.addTag("car_id", (String)CAR_ID);
+  sensor.addTag("ssid", WiFi.SSID());
+  
+  sensor.clearFields();
+  sensor.addField("start", 1);
+  sensor.addField("rssi", WiFi.RSSI());
+  if(!idbClient.writePoint(sensor)) {
+    Serial.print("InfluxDB write failed: ");
+    Serial.println(idbClient.getLastErrorMessage());
+  }
 
 
   // Serial.println("Start RtlsServer Task");
@@ -104,24 +120,6 @@ void setup() {
     5,                      // Task 우선순위
     NULL);                  // Task handle
 
-  // Serial.println("Start Ntp Task");
-  // xTaskCreate(
-  //   NtpTask,                // Task 함수 이름
-  //   "NtpTask",              // Task 이름
-  //   1000,                  // Task 스택 크기
-  //   NULL,                   // Task 파라미터
-  //   4,                      // Task 우선순위
-  //   NULL);                  // Task handle
-
-  // Serial.println("Start Monitor Task");
-  // xTaskCreate( 
-  //   MonitorTask,            // Task 함수 이름
-  //   "MonitorTask",          // Task 이름
-  //   10000,                  // Task 스택 크기
-  //   NULL,                   // Task 파라미터
-  //   3,                     // Task 우선순위
-  //   NULL);                  // Task handle
-
   Serial.println("Start Mp3 Task");
   xTaskCreate(
     Mp3Task,                // Task 함수 이름
@@ -140,7 +138,6 @@ void setup() {
     1,                     // Task 우선순위
     NULL);                  // Task handle
 
-  // vTaskDelay(1000);
   Serial.println("Start SubBoard Task");
   xTaskCreate(
     SubBoardTask,                // Task 함수 이름
