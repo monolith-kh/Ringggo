@@ -74,7 +74,7 @@ void NfcTask(void* parameter)
                 Serial.println(l_arrID);
                 Serial.println((char *)l_arrID);
                 SendNfc((char *)l_arrID, (uint8_t *)uid);
-                Mp3Effect(3);
+                Mp3Effect(4);
 
                 sensor.clearFields();
                 sensor.addField("nfc", 1);

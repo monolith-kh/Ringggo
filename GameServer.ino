@@ -48,7 +48,7 @@ void GameServerTask(void* parameter)
         Protocol_t protocol = {PK_IAM_ANS, CAR, 8, CAR_ID, 0, };
         gameClient.write((const uint8_t *)&protocol, sizeof(protocol));
         Serial.println("send answer");
-        Mp3Play(3);
+        Mp3Play(6);
         sensor.clearFields();
         sensor.addField("connection", 1);
         if(!idbClient.writePoint(sensor)) {
@@ -62,6 +62,7 @@ void GameServerTask(void* parameter)
         Serial.println("send answer");
         sensor.clearFields();
         sensor.addField("healthcheck", 1);
+        sensor.addField("rssi", WiFi.RSSI());
         if(!idbClient.writePoint(sensor)) {
           Serial.print("InfluxDB write failed: ");
           Serial.println(idbClient.getLastErrorMessage());

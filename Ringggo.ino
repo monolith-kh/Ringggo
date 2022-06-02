@@ -6,7 +6,7 @@
 #include "Packet.h"
 
 
-TaskHandle_t* wifiTaskHandler;
+TaskHandle_t wifiTaskHandler;
 
 #include <Adafruit_PN532.h>
 #define PN532_SS    (5)
@@ -50,7 +50,6 @@ void setup() {
   
   sensor.clearFields();
   sensor.addField("start", 1);
-  sensor.addField("rssi", WiFi.RSSI());
   if(!idbClient.writePoint(sensor)) {
     Serial.print("InfluxDB write failed: ");
     Serial.println(idbClient.getLastErrorMessage());
@@ -58,7 +57,7 @@ void setup() {
 
 
   // Serial.println("Start RtlsServer Task");
-  // xTaskCreate(
+  // xTaskCreatePinnedToCore(
   //   RtlsServerTask,         // Task 함수 이름
   //   "RtlsServerTask",       // Task 이름
   //   10000,                  // Task 스택 크기
@@ -67,85 +66,94 @@ void setup() {
   //   NULL);                  // Task handle
 
   Serial.println("Start Bumper Task");
-  xTaskCreate(
-    BumperTask,            // Task 함수 이름
-    "BumperTask",              // Task 이름
-    10000,                  // Task 스택 크기
-    NULL,                   // Task 파라미터
+  xTaskCreatePinnedToCore(
+    BumperTask,              // Task 함수 이름
+    "BumperTask",            // Task 이름
+    10000,                   // Task 스택 크기
+    NULL,                    // Task 파라미터
     12,                      // Task 우선순위
-    NULL);                  // Task handle
+    NULL,                    // Task handle
+    APP_CPU_NUM);                  
 
   Serial.println("Start GameServer Task");
-  xTaskCreate(
+  xTaskCreatePinnedToCore(
     GameServerTask,         // Task 함수 이름
     "GameServerTask",       // Task 이름
     10000,                  // Task 스택 크기
     NULL,                   // Task 파라미터
     9,                      // Task 우선순위
-    NULL);                  // Task handle
+    NULL,                  // Task handle
+    APP_CPU_NUM);
 
   Serial.println("Start GameServer Send Task");
-  xTaskCreate(
+  xTaskCreatePinnedToCore(
     GameServerSendTask,         // Task 함수 이름
     "GameServerSendTask",       // Task 이름
     10000,                  // Task 스택 크기
     NULL,                   // Task 파라미터
     9,                      // Task 우선순위
-    NULL);                  // Task handle
+    NULL,                  // Task handle
+    APP_CPU_NUM);
 
   // Serial.println("Start Wifi Task");
-  // xTaskCreate(
+  // xTaskCreatePinnedToCore(
   //   WifiTask,                // Task 함수 이름
   //   "WifiTask",              // Task 이름
   //   10000,                  // Task 스택 크기
   //   NULL,                   // Task 파라미터
   //   7,                      // Task 우선순위
-  //   wifiTaskHandler);        // Task handle
+  //   wifiTaskHandler,        // Task handle
+      // PRO_CPU_NUM);
 
   Serial.println("Start Led Task");
-  xTaskCreate(
+  xTaskCreatePinnedToCore(
     LedTask,                // Task 함수 이름
     "LedTask",              // Task 이름
     10000,                  // Task 스택 크기
     NULL,                   // Task 파라미터
     6,                      // Task 우선순위
-    NULL);                  // Task handle
+    NULL,                   // Task handle
+    APP_CPU_NUM);
 
   Serial.println("Start Battery Task");
-  xTaskCreate(
+  xTaskCreatePinnedToCore(
     BatteryTask,            // Task 함수 이름
     "BatteryTask",              // Task 이름
     1000,                  // Task 스택 크기
     NULL,                   // Task 파라미터
     5,                      // Task 우선순위
-    NULL);                  // Task handle
+    NULL,                  // Task handle
+    APP_CPU_NUM);
 
   Serial.println("Start Mp3 Task");
-  xTaskCreate(
+  xTaskCreatePinnedToCore(
     Mp3Task,                // Task 함수 이름
     "Mp3Task",              // Task 이름
     1000,                  // Task 스택 크기
     NULL,                   // Task 파라미터
     2,                      // Task 우선순위
-    NULL);                  // Task handle
+    NULL,                   // Task handle
+    APP_CPU_NUM);
 
   Serial.println("Start NFC Task");
-  xTaskCreate(
+  xTaskCreatePinnedToCore(
     NfcTask,                // Task 함수 이름
     "NfcTask",              // Task 이름
     10000,                  // Task 스택 크기
     NULL,                   // Task 파라미터
     1,                     // Task 우선순위
-    NULL);                  // Task handle
+    NULL,                  // Task handle
+    APP_CPU_NUM);
 
-  Serial.println("Start SubBoard Task");
-  xTaskCreate(
-    SubBoardTask,                // Task 함수 이름
-    "SubBoardTask",              // Task 이름
-    10000,                  // Task 스택 크기
-    NULL,                   // Task 파라미터
-    1,                      // Task 우선순위
-    NULL);                  // Task handle
+  // Serial.println("Start SubBoard Task");
+  // xTaskCreatePinnedToCore(
+  //   SubBoardTask,                // Task 함수 이름
+  //   "SubBoardTask",              // Task 이름
+  //   10000,                  // Task 스택 크기
+  //   NULL,                   // Task 파라미터
+  //   1,
+  //   NULL,                      // Task 우선순위
+  //   PRO_CPU_NUM);                  // Task handle
 
   Serial.println(xPortGetFreeHeapSize());
   Serial.println(heap_caps_check_integrity_all(true));

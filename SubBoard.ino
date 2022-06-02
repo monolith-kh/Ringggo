@@ -107,6 +107,15 @@ void SubBoardTask(void* parameter)
     rtlsClient.write((uint8_t *)&protocol, sizeof(protocol));
     rtlsClient.endPacket();
 
+    // sensor.clearFields();
+    // sensor.addField("x", protocol.positionX);
+    // sensor.addField("y", protocol.positionY);
+    // sensor.addField("angle", protocol.headAngle);
+    // if(!idbClient.writePoint(sensor)) {
+    //   Serial.print("InfluxDB write failed: ");
+    //   Serial.println(idbClient.getLastErrorMessage());
+    // }
+
     vTaskDelay(50);
   }
   vTaskDelete(NULL);
