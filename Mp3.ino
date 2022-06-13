@@ -28,7 +28,7 @@ void Mp3Init()
 void Mp3Play(int number)
 {
   Serial.println("Mp3 play");
-  mp3Player.play(number);
+  mp3Player.playMp3Folder(number);
 }
 
 void Mp3Stop()
@@ -85,19 +85,19 @@ void Mp3Task(void* parameter)
       if(readSerial == '0') {
         Mp3Stop();
       } else if (readSerial == '1') {
-        Mp3Loop(1);
+        Mp3Play(1);
       } else if (readSerial == '2') {
-        Mp3Loop(2);
+        Mp3Play(2);
       } else if (readSerial == '3') {
-        Mp3Loop(3);
+        Mp3Play(3);
       } else if (readSerial == '4') {
         Mp3Effect(1);
       } else if (readSerial == '5') {
-        Mp3Loop(6);
+        Mp3Play(6);
       } else if (readSerial == '6') {
-        Mp3Loop(7);
+        Mp3Play(7);
       } else if (readSerial == '7') {
-        Mp3Loop(5);
+        Mp3Play(5);
       } else if (readSerial == '+') {
         volume++;
         Mp3Volume(volume);

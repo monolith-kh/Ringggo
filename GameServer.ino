@@ -48,7 +48,6 @@ void GameServerTask(void* parameter)
         Protocol_t protocol = {PK_IAM_ANS, CAR, 8, CAR_ID, 0, };
         gameClient.write((const uint8_t *)&protocol, sizeof(protocol));
         Serial.println("send answer");
-        Mp3Play(3);
       } else if (packetHeader[0] == PK_CHECK_CONNECTION_REQ) {
         Serial.println("check received");
         Protocol_t protocol = {PK_CHECK_CONNECTION_ANS, CAR, 8, CAR_ID, 0, };
