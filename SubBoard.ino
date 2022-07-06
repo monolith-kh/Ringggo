@@ -94,9 +94,9 @@ void SubBoardTask(void* parameter)
     digitalWrite(VSPI_SS, HIGH); //pull ss high to signify end of data transfer
     vspi->endTransaction();
     
-    Serial.printf("Send: 0x%x\n", spiCmd);
-    sprintf(sBuffer, "Receive: 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x", spiResult[0], spiResult[1], spiResult[2], spiResult[3], spiResult[4], spiResult[5], spiResult[6]);
-    Serial.println(sBuffer);
+    // Serial.printf("Send: 0x%x\n", spiCmd);
+    // sprintf(sBuffer, "Receive: 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x", spiResult[0], spiResult[1], spiResult[2], spiResult[3], spiResult[4], spiResult[5], spiResult[6]);
+    // Serial.println(sBuffer);
 
     rtlsClient.beginPacket(RTLS_HOST, RTLS_PORT);
     Protocol_position_t protocol = { PK_POSITION_NOTI, CAR, 22, CAR_ID, 0, };

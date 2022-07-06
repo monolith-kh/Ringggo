@@ -54,8 +54,8 @@ void GameServerTask(void* parameter)
         gameClient.write((const uint8_t *)&protocol, sizeof(protocol));
         Serial.println("send answer");
       } else if (packetHeader[0] == PK_CARLED_NOTI) {
-        gameClient.readBytes(packetBody, 4);
-        Serial.printf("car led received: %d, %d, %d, %d\n", packetBody[0], packetBody[1], packetBody[2], packetBody[3]);
+        gameClient.readBytes(packetBody, 7);
+        Serial.printf("car led received: %d, %d, %d, %d, %d, %d, %d\n", packetBody[0], packetBody[1], packetBody[2], packetBody[3], packetBody[4], packetBody[5], packetBody[6]);
         xStatus = xQueueSendToFront(xQueueLed, packetBody, 100);
         if(xStatus == pdPASS)
         {

@@ -118,7 +118,7 @@ void Mp3Task(void* parameter)
       if(packetBody[0] == STOP) {
         Mp3Stop();
       } else if(packetBody[0] == PLAY) {
-        Mp3Loop(packetBody[1]);
+        Mp3Play(packetBody[1]);
       } else if(packetBody[0] == EFFECT) {
         Mp3Effect(packetBody[1]);
       } else if(packetBody[0] == VOLUME) {

@@ -28,7 +28,7 @@ void setup() {
   xQueueBumper = xQueueCreate(10, sizeof(uint8_t));
   xQueueBattery = xQueueCreate(5, sizeof(uint8_t));
   xQueueNfc = xQueueCreate(5, sizeof(uint8_t));
-  xQueueLed = xQueueCreate(5, sizeof(uint8_t[4]));
+  xQueueLed = xQueueCreate(5, sizeof(uint8_t[7]));
   xQueueMp3 = xQueueCreate(5, sizeof(uint8_t[2]));
   xQueueRtls = xQueueCreate(10, sizeof(uint8_t[2]));
 

@@ -1,15 +1,18 @@
 #include <FastLED.h>
 
-#define NUM_LEDS 1
+#define NUM_LEDS 2
 
 #define DATA_PIN 4
 #define CLOCK_PIN 15
 
+#define LED_0               0
+#define LED_1               1
+#define LED_ALL             255
+
 #define LED_OFF             0
 #define LED_ON              1
-#define LED_BLINK_200M_SEC  2
-#define LED_BLINK_500M_SEC  3
-#define LED_BLINK_RANDOM    4
+#define LED_BLINK           2
+#define LED_BLINK_RANDOM    255
 
 
 #define COLOR_RINGGGO   0x00AC30
@@ -31,6 +34,10 @@ uint32_t colorList[9] = {
 
 #define RGB(r,g,b)      (r<<16|g<<8|b)
 
+#define RED(color)      (color>>16)
+#define GREEN(color)    (color>>8 & 0x000000ff)
+#define BLUE(color)     (color & 0x000000ff)
+
 
 CRGB leds[NUM_LEDS];
 
@@ -42,30 +49,57 @@ void LedInit()
   FastLED.addLeds<P9813, DATA_PIN, CLOCK_PIN, RGB>(leds, NUM_LEDS);  // BGR ordering is typical
 }
 
-void LedOn(uint32_t color)
+void LedOn(uint8_t index, uint32_t color)
 {
-  // Serial.println("Led On");
-
-  // Turn the LED on, then pause
-  leds[0] = color;
-  FastLED.show();
-  
-}
-
-void LedOff()
-{
-  // Serial.println("Led Off");
-  // Now turn the LED off, then pause
-  leds[0] = CRGB::Black;
+  if(index == LED_ALL)
+  {
+    leds[0] = color;
+    leds[1] = color;
+  }
+  else
+  {
+    leds[index] = color;
+  }
   FastLED.show();
 
 }
 
-void Blink(uint32_t color, uint32_t msec)
+void LedOn(uint8_t index, uint32_t color, uint32_t msec)
 {
-  LedOn(color);
+  for(int i=0; i<256; i++)
+  {
+    leds[0].r = (i/256.0) * RED(color);
+    leds[0].g = (i/256.0) * GREEN(color);
+    leds[0].b = (i/256.0) * BLUE(color);
+    leds[1].r = (i/256.0) * RED(color);
+    leds[1].g = (i/256.0) * GREEN(color);
+    leds[1].b = (i/256.0) * BLUE(color);
+    FastLED.show();
+    vTaskDelay(5);
+  }
+
+}
+
+void LedOff(uint8_t index)
+{
+  if(index == LED_ALL)
+  {
+    leds[0] = CRGB::Black;
+    leds[1] = CRGB::Black;
+  }
+  else
+  {
+    leds[index] = CRGB::Black;
+  }
+  FastLED.show();
+
+}
+
+void Blink(uint8_t index, uint32_t color, uint16_t msec)
+{
+  LedOn(index, color);
   vTaskDelay(msec);
-  LedOff();
+  LedOff(index);
   vTaskDelay(msec);
 }
 
@@ -73,9 +107,11 @@ void LedTask(void* parameter)
 {
     BaseType_t xStatus;
 
-    uint8_t packetBody[4] = { 0, };
+    uint8_t packetBody[7] = { 0, };
 
-    uint8_t type = LED_BLINK_200M_SEC;
+    uint8_t index = LED_ALL;
+    uint8_t type = LED_BLINK;
+    uint16_t ledTime = 500;
     uint32_t color = COLOR_RINGGGO;
 
     LedInit();
@@ -86,34 +122,32 @@ void LedTask(void* parameter)
       xStatus = xQueueReceive(xQueueLed, packetBody, 100);
       if(xStatus == pdPASS)
       {
-        Serial.printf("led queue received: %d, %d, %d, %d\n", packetBody[0], packetBody[1], packetBody[2], packetBody[3]);
-        type = packetBody[0];
-        color = RGB(packetBody[1], packetBody[2], packetBody[3]);
+        Serial.printf("led queue received: %d, %d, %d, %d, %d, %d, %d\n", packetBody[0], packetBody[1], packetBody[2], packetBody[3], packetBody[4], packetBody[5], packetBody[6]);
+        index = packetBody[0];
+        type = packetBody[1];
+        ledTime = (packetBody[2] | packetBody[3] << 8);
+        color = RGB(packetBody[4], packetBody[5], packetBody[6]);
       }
       
       if(type == LED_OFF) {
-        LedOff();
+        LedOff(index);
       } else if(type == LED_ON) {
-        LedOn(color);
-      } else if (type == LED_BLINK_200M_SEC) {
-        Blink(color, 200);
-      } else if (type == LED_BLINK_500M_SEC) {
-        Blink(color, 500);
+        if(ledTime >= 500)
+        {
+          LedOn(index, color, ledTime);
+        }
+        else
+        {
+          LedOn(index, color);
+        }
+      } else if (type == LED_BLINK) {
+        Blink(index, color, ledTime);
       } else if (type == LED_BLINK_RANDOM) {
-        Blink(colorList[rand()%sizeof(colorList)], 500);
+        Blink(index, colorList[rand()%sizeof(colorList)], ledTime);
       } else {
         Serial.println("invalid led type");
       }
 
-      // Blink(COLOR_RINGGGO, 500);
-      // Blink(COLOR_RED, 500);
-      // Blink(COLOR_WHITE, 500);
-      // Blink(COLOR_YELLOW, 500);
-      // Blink(COLOR_DARKRED, 500);
-      // Blink(COLOR_LIME, 500);
-      // Blink(COLOR_BLUE, 500);
-      // Blink(COLOR_GREEN, 500);
-      // Blink(COLOR_AQUA, 500);
     }
     vTaskDelete(NULL);
 }
