@@ -11,7 +11,7 @@ int volume = 5;
 
 void Mp3Init()
 {
-  Serial.println("Init Mp3");
+  log_i("Init Mp3");
 
   Serial2.begin(9600);
   mp3Player.begin(Serial2);
@@ -27,40 +27,39 @@ void Mp3Init()
 
 void Mp3Play(int number)
 {
-  Serial.println("Mp3 play");
+  log_i("Mp3 play");
   mp3Player.playMp3Folder(number);
 }
 
 void Mp3Stop()
 {
-  Serial.println("Mp3 stop");
+  log_i("Mp3 stop");
   mp3Player.stop();
 }
 
 void Mp3Effect(int number)
 {
-  Serial.println("Mp3 effect");
+  log_i("Mp3 effect");
   mp3Player.advertise(number);
 }
 
 void Mp3Pause()
 {
-  Serial.println("Mp3 pause");
+  log_i("Mp3 pause");
   mp3Player.pause();
 }
 
 void Mp3Loop(int number)
 {
-  Serial.println("Mp3 loop");
+  log_i("Mp3 loop");
   mp3Player.loop(number);
 }
 
 
 void Mp3Volume(int number)
 {
-  Serial.println("Mp3 Volume");
   mp3Player.volume(number);
-  Serial.println(volume);
+  log_i("Mp3 Volume: %d", volume);
 }
 
 void Mp3Task(void* parameter)
@@ -105,7 +104,7 @@ void Mp3Task(void* parameter)
         volume--;
         Mp3Volume(volume);
       } else {
-        Serial.println("Mp3 invalid cmd (0: stop, 1: play, 2: effect ah, 3: pause, 4: effect ome, +: volume up, -: volume down)");
+        log_i("Mp3 invalid cmd (0: stop, 1: play, 2: effect ah, 3: pause, 4: effect ome, +: volume up, -: volume down)");
       }
 
     }
@@ -113,7 +112,7 @@ void Mp3Task(void* parameter)
     xStatus = xQueueReceive(xQueueMp3, packetBody, 100);
     if(xStatus == pdPASS)
     {
-      Serial.printf("mp3 queue received: %d, %d\n", packetBody[0], packetBody[1]);
+      log_i("mp3 queue received: %d, %d\n", packetBody[0], packetBody[1]);
       
       if(packetBody[0] == STOP) {
         Mp3Stop();
@@ -124,7 +123,7 @@ void Mp3Task(void* parameter)
       } else if(packetBody[0] == VOLUME) {
         Mp3Volume(packetBody[1]);
       } else {
-        Serial.println("invalid mp3 cmd");
+        log_i("invalid mp3 cmd");
       }
     }
 

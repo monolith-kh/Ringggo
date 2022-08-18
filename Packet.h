@@ -8,8 +8,9 @@
 #define PK_CARSPEED_NOTI			0xC3
 #define PK_CARLED_NOTI				0xC4
 #define PK_CARSOUND_NOTI			0xC5
-#define PK_CARSTARTSTOP_NOTI		0xC6
+#define PK_CARACTIVEMODE_NOTI		0xC6
 #define PK_BUMP_NOTI                0xC7
+#define PK_ERROR_NOTI               0xC8
 #define PK_POSITION_NOTI            0xD1
 
 #pragma pack(1)

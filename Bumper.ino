@@ -61,7 +61,7 @@ void BumperTask(void* parameter)
             xStatus = xQueueSendToFront(xQueueBumper, &bumper, 100);
             if(xStatus == pdPASS)
             {
-                Serial.printf("send game server queue: %x\n", bumper);
+                log_i("send game server queue: %x", bumper);
             }
             bumper = 0;
             pressed = false;

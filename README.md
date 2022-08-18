@@ -3,7 +3,7 @@ Electrics devices vehicle based on esp32(ESP32-WROOM-32D)
 
 ## Board 환경 설치
 - File → Preferences → Additional Boards Manager URLs
-- https://dl.espressif.com/dl/package_esp32_index.json, http://arduino.esp8266.com/stable/package_esp8266com_index.json
+- https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
 - Tools → Board → Boards Manager → esp32 검색 및 설치
 
 ## Tools에 세팅

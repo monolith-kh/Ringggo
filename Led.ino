@@ -44,7 +44,7 @@ CRGB leds[NUM_LEDS];
 
 void LedInit()
 {
-  Serial.println("Init Led");
+  log_i("Init Led");
 
   FastLED.addLeds<P9813, DATA_PIN, CLOCK_PIN, RGB>(leds, NUM_LEDS);  // BGR ordering is typical
 }

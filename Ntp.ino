@@ -1,11 +1,11 @@
-// #include <NTPClient.h>
-// #include <WiFiUdp.h>
-
-// WiFiUDP ntpUDP;
+//#include <NTPClient.h>
+//#include <WiFiUdp.h>
+//
+//WiFiUDP ntpUDP;
 
 // By default 'pool.ntp.org' is used with 60 seconds update interval and
 // no offset
-// NTPClient timeClient(ntpUDP);
+//NTPClient timeClient(ntpUDP);
 // NTPClient timeClient(ntpUDP, "time.bora.net", 0, 60000);
 
 // You can specify the time server pool and the offset, (in seconds)
@@ -13,17 +13,18 @@
 // NTPClient timeClient(ntpUDP, "europe.pool.ntp.org", 3600, 60000);
 
 
-// void NtpInit()
-// {
-//   Serial.println("Init Ntp");
-
-//   timeClient.begin();
-// }
+//void NtpInit()
+//{
+//    Serial.println("Init Ntp");
+//
+//    timeClient.begin();
+//    timeClient.update();
+//}
 
 // void NtpTask(void* parameter)
 // {
-//   NtpInit();
-  
+//    NtpInit();
+//  
 //   for (;;)
 //   {
 //       Serial.println("Ntp Task");

@@ -7,7 +7,7 @@ uint8_t g_dBatteryValue = 0;
 
 void BatteryInit()
 {
-  Serial.println("Init Battery");
+  log_i("Init Battery");
 }
 
 void BatteryTask(void* parameter)
@@ -79,13 +79,7 @@ void BatteryTask(void* parameter)
     if (l_dDispCount > 20)      // 60초에 한번씩 송출
     {
       l_dDispCount = 0;
-  
-      Serial.print(l_udBatteryADValue);
-      Serial.print("  ");
-      Serial.print(g_fBatteryVolt);
-      Serial.print("  ");
-      Serial.println(g_dBatteryValue);
-      // SendBattery(g_dBatteryValue);
+      log_i("AD: %d, Voltage: %f, Percent: %d", l_udBatteryADValue, g_fBatteryVolt, g_dBatteryValue);
       xStatus = xQueueSendToFront(xQueueBattery, &g_dBatteryValue, 100);
     }
     
