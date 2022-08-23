@@ -60,14 +60,14 @@ void setup() {
   //   14,                      // Task 우선순위
   //   NULL);                  // Task handle
 
-  // log_i("Start Bumper Task");
-  // xTaskCreate(
-  //   BumperTask,            // Task 함수 이름
-  //   "BumperTask",              // Task 이름
-  //   10000,                  // Task 스택 크기
-  //   NULL,                   // Task 파라미터
-  //   12,                      // Task 우선순위
-  //   NULL);                  // Task handle
+  log_i("Start Bumper Task");
+  xTaskCreate(
+    BumperTask,            // Task 함수 이름
+    "BumperTask",              // Task 이름
+    10000,                  // Task 스택 크기
+    NULL,                   // Task 파라미터
+    12,                      // Task 우선순위
+    NULL);                  // Task handle
 
   log_i("Start GameServer Task");
   xTaskCreate(
